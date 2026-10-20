@@ -1,0 +1,17 @@
+{
+  "short_name": "Rechner",
+  "name": "ERZ-com Vertragsrechner",
+  "icons": [
+    {
+      "src": "icon.jpg",
+      "type": "image/jpeg",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "rechner.html",
+  "background_color": "#070f1e",
+  "theme_color": "#070f1e",
+  "display": "standalone",
+  "orientation": "portrait"
+}
