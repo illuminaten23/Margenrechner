@@ -5,20 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ERZ-com Vertragsrechner</title>
     
-    <!-- PWA Verknüpfungen für Installation und App-Icon -->
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon.png">
     <link rel="icon" type="image/png" href="icon.png">
 
     <style>
         :root {
-            --bg-dark: #070f1e;        /* Tiefes, modernes Dunkelblau-Schwarz */
-            --card-bg: #0f1b2f;       /* Edles Dunkelblau für Kacheln */
-            --primary: #1a4273;       /* Akzent-Blau */
-            --accent-green: #71be16;  /* Das originale ERZ-com Grün */
-            --text-main: #f1f5f9;     /* Klares Weiß für Texte */
-            --text-muted: #94a3b8;    /* Sanftes Grau für Labels */
-            --border-color: #1e293b;  /* Subtile Trennlinien */
+            --bg-dark: #070f1e;
+            --card-bg: #0f1b2f;
+            --primary: #1a4273;
+            --accent-green: #71be16;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: #1e293b;
         }
         
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -66,8 +65,10 @@
             letter-spacing: 1px;
         }
         
-        /* Modernes Schieberegler-Design (Pill-Selector) */
-        .tabs { 
+        /* REINES CSS-UMSCHALTEN (AUSFALLSICHER) */
+        .tab-radio { display: none; }
+        
+        .tabs-nav { 
             display: flex; 
             background: var(--bg-dark); 
             padding: 6px;
@@ -76,11 +77,9 @@
             border: 1px solid var(--border-color);
         }
         
-        .tab-btn { 
+        .tab-label { 
             flex: 1; 
             padding: 12px; 
-            border: none; 
-            background: none; 
             font-size: 0.9rem; 
             font-weight: 600; 
             color: var(--text-muted); 
@@ -90,23 +89,18 @@
             transition: all 0.25s ease;
         }
         
-        .tab-btn.active { 
-            color: var(--text-main); 
-            background: var(--card-bg); 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-        
-        .content {
-            position: relative;
-        }
-
         .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        
+        /* Aktiviert die Tabs rein mechanisch über CSS */
+        #radio-marge:checked ~ .tabs-nav .label-marge { color: var(--text-main); background: var(--card-bg); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        #radio-preis:checked ~ .tabs-nav .label-preis { color: var(--text-main); background: var(--card-bg); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        
+        #radio-marge:checked ~ .content-panes #tab-marge { display: block; }
+        #radio-preis:checked ~ .content-panes #tab-preis { display: block; }
 
         .input-group { margin-bottom: 18px; }
         .input-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
         
-        /* Futuristische Eingabefelder */
         .input-wrapper { position: relative; display: flex; align-items: center; }
         .input-wrapper input { 
             width: 100%; 
@@ -127,7 +121,6 @@
         
         .input-wrapper::after { content: "€"; position: absolute; right: 16px; color: var(--text-muted); font-weight: bold; pointer-events: none; }
         
-        /* Moderner Aktions-Button */
         .btn-calc { 
             width: 100%; 
             padding: 14px; 
@@ -142,10 +135,8 @@
             box-shadow: 0 8px 20px rgba(113, 190, 22, 0.25);
             transition: all 0.2s ease;
         }
-        .btn-calc:hover { opacity: 0.9; }
         .btn-calc:active { transform: scale(0.98); box-shadow: 0 4px 10px rgba(113, 190, 22, 0.2); }
         
-        /* Stilvolle Dashboard-Ergebnisbox */
         .result-box { 
             margin-top: 24px; 
             padding: 18px; 
@@ -165,7 +156,6 @@
         .result-box .main-value { font-size: 1.8rem; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; }
         .result-box .sub-value { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
         
-        /* Dezente Warnmeldung */
         .alert-box { 
             margin-top: 14px; 
             padding: 10px 14px; 
@@ -187,14 +177,18 @@
         <p>Handyshops Olbernhau + Marienberg</p>
     </div>
     
-    <div class="tabs">
-        <button id="btn-marge" class="tab-btn active" onclick="switchTab('marge')">Marge berechnen</button>
-        <button id="btn-preis" class="tab-btn" onclick="switchTab('preis')">Preis kalkulieren</button>
+    <!-- Diese unsichtbaren Schalter steuern das Layout völlig ohne JavaScript -->
+    <input type="radio" id="radio-marge" name="tab-group" class="tab-radio" checked>
+    <input type="radio" id="radio-preis" name="tab-group" class="tab-radio">
+
+    <div class="tabs-nav">
+        <label for="radio-marge" class="tab-label label-marge">Marge berechnen</label>
+        <label for="radio-preis" class="tab-label label-preis">Preis kalkulieren</label>
     </div>
 
-    <div class="content">
+    <div class="content-panes">
         <!-- TAB 1: MARGE -->
-        <div id="tab-marge" class="tab-content active">
+        <div id="tab-marge" class="tab-content">
             <div class="input-group"><label>Brutto-Verkaufspreis (vom Kunden)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="m-brutto-vk" placeholder="0,00"></div></div>
             <div class="input-group"><label>Einkaufspreis / Warenkosten (netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="m-netto-ek" placeholder="0,00"></div></div>
             <div class="input-group"><label>Provision (erhalten, netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="m-provision" placeholder="0,00"></div></div>
