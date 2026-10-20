@@ -210,8 +210,8 @@
     </div>
     
     <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('marge')">Marge berechnen</button>
-        <button class="tab-btn" onclick="switchTab('preis')">Preis kalkulieren</button>
+        <button id="btn-marge" class="tab-btn active" onclick="switchTab('marge')">Marge berechnen</button>
+        <button id="btn-preis" class="tab-btn" onclick="switchTab('preis')">Preis kalkulieren</button>
     </div>
 
     <div class="content">
@@ -299,10 +299,9 @@
 
     // --- Tab-Steuerung ---
     function switchTab(mode) {
+        // Zuerst alle Tabs und Buttons deaktivieren
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         
+        // Gezielt das gewählte Element aktivieren
         if(mode === 'marge') {
-            document.querySelectorAll('.tab-btn')[0].classList.add('active');
-            document.getElementById('tab-marge').classList.add('active');
-        } else {
