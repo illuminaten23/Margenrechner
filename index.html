@@ -25,14 +25,12 @@
         .header h1 { font-size: 1.3rem; margin-bottom: 4px; }
         .header p { font-size: 0.85rem; opacity: 0.9; }
         
-        /* Reine CSS-Tab-Steuerung über Radio-Buttons */
         .tab-radio { display: none; }
         .tabs-nav { display: flex; background: #edf2f7; border-bottom: 1px solid var(--border-color); }
         .tab-label { flex: 1; padding: 14px; font-size: 0.9rem; font-weight: bold; color: #64748b; cursor: pointer; text-align: center; transition: all 0.2s; }
         
         .tab-content { display: none; padding: 20px; }
         
-        /* Logik fürs Umschalten ohne JavaScript */
         #radio-marge:checked ~ .tabs-nav .label-marge { color: var(--primary-color); background: white; border-bottom: 3px solid var(--primary-color); }
         #radio-preis:checked ~ .tabs-nav .label-preis { color: var(--primary-color); background: white; border-bottom: 3px solid var(--primary-color); }
         
@@ -64,7 +62,6 @@
         <p>Handyshops Olbernhau + Marienberg</p>
     </div>
     
-    <!-- Unsichtbare Radio-Buttons steuern die Tabs -->
     <input type="radio" id="radio-marge" name="tab-group" class="tab-radio" checked>
     <input type="radio" id="radio-preis" name="tab-group" class="tab-radio">
 
@@ -76,9 +73,9 @@
     <div class="content-panes">
         <!-- TAB 1: MARGE -->
         <div id="tab-marge" class="tab-content">
-            <div class="input-group"><label>Brutto-Verkaufspreis (vom Kunden)</label><div class="input-wrapper"><input type="number" step="0.01" id="m-brutto-vk"></div></div>
-            <div class="input-group"><label>Einkaufspreis / Warenkosten (netto)</label><div class="input-wrapper"><input type="number" step="0.01" id="m-netto-ek"></div></div>
-            <div class="input-group"><label>Provision (erhalten, netto)</label><div class="input-wrapper"><input type="number" step="0.01" id="m-provision"></div></div>
+            <div class="input-group"><label>Brutto-Verkaufspreis (vom Kunden)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="m-brutto-vk" placeholder="0,00"></div></div>
+            <div class="input-group"><label>Einkaufspreis / Warenkosten (netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="m-netto-ek" placeholder="0,00"></div></div>
+            <div class="input-group"><label>Provision (erhalten, netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="m-provision" placeholder="0,00"></div></div>
             <div class="input-group">
                 <label>NBA (netto)</label>
                 <div class="input-wrapper select-wrapper">
@@ -99,8 +96,8 @@
 
         <!-- TAB 2: PREIS -->
         <div id="tab-preis" class="tab-content">
-            <div class="input-group"><label>Einkaufspreis / Warenkosten (netto)</label><div class="input-wrapper"><input type="number" step="0.01" id="p-netto-ek"></div></div>
-            <div class="input-group"><label>Provision (erhalten, netto)</label><div class="input-wrapper"><input type="number" step="0.01" id="p-provision"></div></div>
+            <div class="input-group"><label>Einkaufspreis / Warenkosten (netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="p-netto-ek" placeholder="0,00"></div></div>
+            <div class="input-group"><label>Provision (erhalten, netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="p-provision" placeholder="0,00"></div></div>
             <div class="input-group">
                 <label>NBA (netto)</label>
                 <div class="input-wrapper select-wrapper">
@@ -111,7 +108,7 @@
                     </select>
                 </div>
             </div>
-            <div class="input-group"><label>Gewünschter Ziel-Nettogewinn (Mindestmarge)</label><div class="input-wrapper"><input type="number" step="0.01" id="p-ziel-gewinn"></div></div>
+            <div class="input-group"><label>Gewünschter Ziel-Nettogewinn (Mindestmarge)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="p-ziel-gewinn" placeholder="0,00"></div></div>
             <button class="btn-calc" onclick="kalkulierePreis()">Verkaufspreis ermitteln</button>
             <div id="alert-preis" class="alert-box">🚨 Hinweis: Provision & NBA decken die Kosten. Mindestpreis angewendet.</div>
             <div id="res-preis" class="result-box">
@@ -133,7 +130,9 @@
     
     function holeWert(id) { 
         const el = document.getElementById(id);
-        return el ? (parseFloat(el.value) || 0) : 0; 
+        if (!el) return 0;
+        let wertText = el.value.toString().replace(',', '.').trim();
+        return parseFloat(wertText) || 0; 
     }
     
     function formatEuro(wert) { return wert.toFixed(2).replace('.', ',') + " €"; }
@@ -150,7 +149,7 @@
         let bruttoVk = holeWert('m-brutto-vk');
         let nettoEk = holeWert('m-netto-ek');
         let provision = holeWert('m-provision');
-        let nba = holeWert('m-nba');
+        let nba = holeWert('m-nba'); // Dropdown-Wert auslesen funktioniert jetzt sicher
         let nettoVk = bruttoZuNetto(bruttoVk);
         let gewinn = (nettoVk + provision + nba) - nettoEk;
         
@@ -162,7 +161,7 @@
     function kalkulierePreis() {
         let nettoEk = holeWert('p-netto-ek');
         let provision = holeWert('p-provision');
-        let nba = holeWert('p-nba');
+        let nba = holeWert('p-nba'); // Dropdown-Wert auslesen funktioniert jetzt sicher
         let zielGewinn = holeWert('p-ziel-gewinn');
         let erfNettoVkIdeal = (nettoEk + zielGewinn) - provision - nba;
         let minNettoVk = bruttoZuNetto(MIN_BRUTTO_VK);
@@ -176,5 +175,3 @@
             document.getElementById('alert-preis').style.display = 'none';
         }
         
-        document.getElementById('val-preis-brutto').innerText = formatEuro(bruttoFinal);
-        document.getElementById('val-preis-netto').innerText = "Erforderlicher Netto-VK: " + formatEuro(bruttoZuNetto(bruttoFinal));
