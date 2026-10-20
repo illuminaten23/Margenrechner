@@ -65,7 +65,6 @@
             letter-spacing: 1px;
         }
         
-        /* REINES CSS-UMSCHALTEN (AUSFALLSICHER) */
         .tab-radio { display: none; }
         
         .tabs-nav { 
@@ -91,7 +90,6 @@
         
         .tab-content { display: none; }
         
-        /* Aktiviert die Tabs rein mechanisch über CSS */
         #radio-marge:checked ~ .tabs-nav .label-marge { color: var(--text-main); background: var(--card-bg); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
         #radio-preis:checked ~ .tabs-nav .label-preis { color: var(--text-main); background: var(--card-bg); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
         
@@ -177,7 +175,6 @@
         <p>Handyshops Olbernhau + Marienberg</p>
     </div>
     
-    <!-- Diese unsichtbaren Schalter steuern das Layout völlig ohne JavaScript -->
     <input type="radio" id="radio-marge" name="tab-group" class="tab-radio" checked>
     <input type="radio" id="radio-preis" name="tab-group" class="tab-radio">
 
@@ -226,10 +223,13 @@
     function bruttoZuNetto(brutto) { return brutto / (1 + (MWST_SATZ / 100)); }
     function nettoZuBrutto(netto) { return netto * (1 + (MWST_SATZ / 100)); }
     
+    // Extrem robuste Bereinigung aller Smartphone-Tastatureingaben
     function holeWert(id) { 
         const el = document.getElementById(id);
         if (!el) return 0;
-        let wertText = el.value.toString().replace(',', '.').trim();
-        return parseFloat(wertText) || 0; 
+        // Ersetzt Kommas durch Punkte und filtert unsichtbare Steuerzeichen heraus
+        let text = el.value.toString().replace(/,/g, '.').replace(/[^0-9.]/g, '').trim();
+        let num = parseFloat(text);
+        return isNaN(num) ? 0 : num;
     }
     
