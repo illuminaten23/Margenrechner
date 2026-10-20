@@ -108,7 +108,7 @@
         
         /* Futuristische Eingabefelder */
         .input-wrapper { position: relative; display: flex; align-items: center; }
-        .input-wrapper input, .input-wrapper select { 
+        .input-wrapper input { 
             width: 100%; 
             padding: 12px 38px 12px 14px; 
             border: 1.5px solid var(--border-color); 
@@ -118,17 +118,14 @@
             background: var(--bg-dark); 
             color: var(--text-main);
             transition: all 0.25s ease;
-            -webkit-appearance: none; 
-            appearance: none; 
         }
         
-        .input-wrapper input:focus, .input-wrapper select:focus { 
+        .input-wrapper input:focus { 
             border-color: var(--accent-green); 
             box-shadow: 0 0 0 3px rgba(113, 190, 22, 0.15);
         }
         
         .input-wrapper::after { content: "€"; position: absolute; right: 16px; color: var(--text-muted); font-weight: bold; pointer-events: none; }
-        .input-wrapper.select-wrapper::after { content: "▼"; color: var(--text-muted); font-size: 0.75rem; right: 16px; }
         
         /* Moderner Aktions-Button */
         .btn-calc { 
@@ -200,16 +197,7 @@
             <div class="input-group"><label>Brutto-Verkaufspreis (vom Kunden)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="m-brutto-vk" placeholder="0,00"></div></div>
             <div class="input-group"><label>Einkaufspreis / Warenkosten (netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="m-netto-ek" placeholder="0,00"></div></div>
             <div class="input-group"><label>Provision (erhalten, netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="m-provision" placeholder="0,00"></div></div>
-            <div class="input-group">
-                <label>NBA (netto)</label>
-                <div class="input-wrapper select-wrapper">
-                    <select id="m-nba">
-                        <option value="0">kein</option>
-                        <option value="40">40 €</option>
-                        <option value="80">80 €</option>
-                    </select>
-                </div>
-            </div>
+            <div class="input-group"><label>NBA (netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="m-nba" placeholder="0,00"></div></div>
             <button class="btn-calc" onclick="kalkuliereMarge()">Gewinn berechnen</button>
             <div id="res-marge" class="result-box">
                 <h3>Ihr Nettogewinn (Gesamtmarge)</h3>
@@ -222,18 +210,31 @@
         <div id="tab-preis" class="tab-content">
             <div class="input-group"><label>Einkaufspreis / Warenkosten (netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="p-netto-ek" placeholder="0,00"></div></div>
             <div class="input-group"><label>Provision (erhalten, netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="p-provision" placeholder="0,00"></div></div>
-            <div class="input-group">
-                <label>NBA (netto)</label>
-                <div class="input-wrapper select-wrapper">
-                    <select id="p-nba">
-                        <option value="0">kein</option>
-                        <option value="40">40 €</option>
-                        <option value="80">80 €</option>
-                    </select>
-                </div>
-            </div>
+            <div class="input-group"><label>NBA (netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="p-nba" placeholder="0,00"></div></div>
             <div class="input-group"><label>Gewünschter Ziel-Nettogewinn (Mindestmarge)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="p-ziel-gewinn" placeholder="0,00"></div></div>
             <button class="btn-calc" onclick="kalkulierePreis()">Verkaufspreis ermitteln</button>
             <div id="alert-preis" class="alert-box">🚨 Hinweis: Provision & NBA decken die Kosten. Mindestpreis angewendet.</div>
             <div id="res-preis" class="result-box">
                 <h3>Erforderlicher Brutto-Verkaufspreis</h3>
+                <div class="main-value" id="val-preis-brutto">0,00 €</div>
+                <div class="sub-value" id="val-preis-netto">Erforderlicher Netto-VK: 0,00 €</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const MWST_SATZ = 19.0;
+    const MIN_BRUTTO_VK = 1.00;
+    const MARKETING_ENDING = 0.90;
+
+    function bruttoZuNetto(brutto) { return brutto / (1 + (MWST_SATZ / 100)); }
+    function nettoZuBrutto(netto) { return netto * (1 + (MWST_SATZ / 100)); }
+    
+    function holeWert(id) { 
+        const el = document.getElementById(id);
+        if (!el) return 0;
+        let wertText = el.value.toString().replace(',', '.').trim();
+        return parseFloat(wertText) || 0; 
+    }
+    
