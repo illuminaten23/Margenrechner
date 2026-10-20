@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ERZ-com Vertragsrechner</title>
     
+    <!-- PWA Verknüpfungen für Installation und App-Icon -->
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon.png">
     <link rel="icon" type="image/png" href="icon.png">
@@ -65,40 +66,42 @@
             letter-spacing: 1px;
         }
         
-        /* Unsichtbare Radio-Buttons steuern die Tabs */
-        .tab-radio { display: none; }
-        
         /* Modernes Schieberegler-Design (Pill-Selector) */
-        .tabs-nav { 
+        .tabs { 
             display: flex; 
             background: var(--bg-dark); 
             padding: 6px;
             border-radius: 14px;
             margin-bottom: 24px;
             border: 1px solid var(--border-color);
-            position: relative;
         }
         
-        .tab-label { 
+        .tab-btn { 
             flex: 1; 
-            padding: 10px; 
+            padding: 12px; 
+            border: none; 
+            background: none; 
             font-size: 0.9rem; 
             font-weight: 600; 
             color: var(--text-muted); 
             cursor: pointer; 
             text-align: center; 
-            z-index: 2;
-            transition: color 0.3s ease;
+            border-radius: 10px;
+            transition: all 0.25s ease;
         }
         
+        .tab-btn.active { 
+            color: var(--text-main); 
+            background: var(--card-bg); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .content {
+            position: relative;
+        }
+
         .tab-content { display: none; }
-        
-        /* Steuerungslogik via CSS */
-        #radio-marge:checked ~ .tabs-nav .label-marge { color: var(--text-main); background: var(--card-bg); border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        #radio-preis:checked ~ .tabs-nav .label-preis { color: var(--text-main); background: var(--card-bg); border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        
-        #radio-marge:checked ~ .content-panes #tab-marge { display: block; }
-        #radio-preis:checked ~ .content-panes #tab-preis { display: block; }
+        .tab-content.active { display: block; }
 
         .input-group { margin-bottom: 18px; }
         .input-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
@@ -183,23 +186,20 @@
 <div class="app-container">
     <div class="header">
         <h1>ERZ-com.net</h1>
-        <p>Vertragsrechner</p>
+        <p>Handyshops Olbernhau + Marienberg</p>
     </div>
     
-    <input type="radio" id="radio-marge" name="tab-group" class="tab-radio" checked>
-    <input type="radio" id="radio-preis" name="tab-group" class="tab-radio">
-
-    <div class="tabs-nav">
-        <label for="radio-marge" class="tab-label label-marge">Marge</label>
-        <label for="radio-preis" class="tab-label label-preis">Preiskalkulation</label>
+    <div class="tabs">
+        <button id="btn-marge" class="tab-btn active" onclick="switchTab('marge')">Marge berechnen</button>
+        <button id="btn-preis" class="tab-btn" onclick="switchTab('preis')">Preis kalkulieren</button>
     </div>
 
-    <div class="content-panes">
+    <div class="content">
         <!-- TAB 1: MARGE -->
-        <div id="tab-marge" class="tab-content">
-            <div class="input-group"><label>Brutto-Verkaufspreis</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="m-brutto-vk" placeholder="0,00"></div></div>
-            <div class="input-group"><label>Einkaufspreis (netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="m-netto-ek" placeholder="0,00"></div></div>
-            <div class="input-group"><label>Provision (netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="m-provision" placeholder="0,00"></div></div>
+        <div id="tab-marge" class="tab-content active">
+            <div class="input-group"><label>Brutto-Verkaufspreis (vom Kunden)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="m-brutto-vk" placeholder="0,00"></div></div>
+            <div class="input-group"><label>Einkaufspreis / Warenkosten (netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="m-netto-ek" placeholder="0,00"></div></div>
+            <div class="input-group"><label>Provision (erhalten, netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="m-provision" placeholder="0,00"></div></div>
             <div class="input-group">
                 <label>NBA (netto)</label>
                 <div class="input-wrapper select-wrapper">
@@ -212,7 +212,7 @@
             </div>
             <button class="btn-calc" onclick="kalkuliereMarge()">Gewinn berechnen</button>
             <div id="res-marge" class="result-box">
-                <h3>Nettogewinn (Gesamtmarge)</h3>
+                <h3>Ihr Nettogewinn (Gesamtmarge)</h3>
                 <div class="main-value" id="val-marge-gewinn">0,00 €</div>
                 <div class="sub-value" id="val-marge-netto-vk">Netto-VK: 0,00 €</div>
             </div>
@@ -220,8 +220,8 @@
 
         <!-- TAB 2: PREIS -->
         <div id="tab-preis" class="tab-content">
-            <div class="input-group"><label>Einkaufspreis (netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="p-netto-ek" placeholder="0,00"></div></div>
-            <div class="input-group"><label>Provision (netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="p-provision" placeholder="0,00"></div></div>
+            <div class="input-group"><label>Einkaufspreis / Warenkosten (netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="p-netto-ek" placeholder="0,00"></div></div>
+            <div class="input-group"><label>Provision (erhalten, netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="p-provision" placeholder="0,00"></div></div>
             <div class="input-group">
                 <label>NBA (netto)</label>
                 <div class="input-wrapper select-wrapper">
@@ -232,4 +232,8 @@
                     </select>
                 </div>
             </div>
-            <div class="input-group"><label>Ziel-Nettogewinn</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="p-ziel-gewinn" placeholder="0,00"></div></div>
+            <div class="input-group"><label>Gewünschter Ziel-Nettogewinn (Mindestmarge)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="p-ziel-gewinn" placeholder="0,00"></div></div>
+            <button class="btn-calc" onclick="kalkulierePreis()">Verkaufspreis ermitteln</button>
+            <div id="alert-preis" class="alert-box">🚨 Hinweis: Provision & NBA decken die Kosten. Mindestpreis angewendet.</div>
+            <div id="res-preis" class="result-box">
+                <h3>Erforderlicher Brutto-Verkaufspreis</h3>
