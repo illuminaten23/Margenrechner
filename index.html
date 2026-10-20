@@ -65,6 +65,7 @@
             letter-spacing: 1px;
         }
         
+        /* Unsichtbare Schalter */
         .tab-radio { display: none; }
         
         .tabs-nav { 
@@ -90,6 +91,7 @@
         
         .tab-content { display: none; }
         
+        /* CSS-Umschaltung */
         #radio-marge:checked ~ .tabs-nav .label-marge { color: var(--text-main); background: var(--card-bg); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
         #radio-preis:checked ~ .tabs-nav .label-preis { color: var(--text-main); background: var(--card-bg); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
         
@@ -223,13 +225,14 @@
     function bruttoZuNetto(brutto) { return brutto / (1 + (MWST_SATZ / 100)); }
     function nettoZuBrutto(netto) { return netto * (1 + (MWST_SATZ / 100)); }
     
-    // Extrem robuste Bereinigung aller Smartphone-Tastatureingaben
     function holeWert(id) { 
         const el = document.getElementById(id);
         if (!el) return 0;
-        // Ersetzt Kommas durch Punkte und filtert unsichtbare Steuerzeichen heraus
         let text = el.value.toString().replace(/,/g, '.').replace(/[^0-9.]/g, '').trim();
         let num = parseFloat(text);
         return isNaN(num) ? 0 : num;
     }
     
+    function formatEuro(wert) { return wert.toFixed(2).replace('.', ',') + " €"; }
+
+    function rundeAufX990(preis) {
