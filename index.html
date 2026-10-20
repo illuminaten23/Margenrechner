@@ -3,120 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ERZ-com Vertragsrechner</title>
-    
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icon.png">
-    <link rel="icon" type="image/png" href="icon.png">
-
+    <title>Vertragsrechner App</title>
     <style>
         :root {
-            --primary-color: #0b2d54;
-            --secondary-color: #71be16;
-            --bg-color: #f4f6f9;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
             --card-bg: #ffffff;
-            --text-color: #333333;
-            --border-color: #e2e8f0;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --success: #16a34a;
+            --accent: #ea580c;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
-        .app-container { background: var(--card-bg); width: 100%; max-width: 450px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow: hidden; border: 1px solid var(--border-color); }
-        .header { background: var(--primary-color); color: white; padding: 20px; text-align: center; border-bottom: 4px solid var(--secondary-color); }
-        .header h1 { font-size: 1.3rem; margin-bottom: 4px; }
-        .header p { font-size: 0.85rem; opacity: 0.9; }
-        
-        .tab-radio { display: none; }
-        .tabs-nav { display: flex; background: #edf2f7; border-bottom: 1px solid var(--border-color); }
-        .tab-label { flex: 1; padding: 14px; font-size: 0.9rem; font-weight: bold; color: #64748b; cursor: pointer; text-align: center; transition: all 0.2s; }
-        
-        .tab-content { display: none; padding: 20px; }
-        
-        #radio-marge:checked ~ .tabs-nav .label-marge { color: var(--primary-color); background: white; border-bottom: 3px solid var(--primary-color); }
-        #radio-preis:checked ~ .tabs-nav .label-preis { color: var(--primary-color); background: white; border-bottom: 3px solid var(--primary-color); }
-        
-        #radio-marge:checked ~ .content-panes #tab-marge { display: block; }
-        #radio-preis:checked ~ .content-panes #tab-preis { display: block; }
-
-        .input-group { margin-bottom: 14px; }
-        .input-group label { display: block; font-size: 0.8rem; font-weight: bold; margin-bottom: 4px; color: #475569; }
-        .input-wrapper { position: relative; display: flex; align-items: center; }
-        .input-wrapper input, .input-wrapper select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1rem; outline: none; background: white; -webkit-appearance: none; appearance: none; }
-        .input-wrapper::after { content: "€"; position: absolute; right: 12px; color: #94a3b8; font-weight: bold; pointer-events: none; }
-        .input-wrapper.select-wrapper::after { content: "▼"; color: #64748b; font-size: 0.8rem; right: 14px; }
-        
-        .btn-calc { width: 100%; padding: 12px; background: var(--primary-color); color: white; border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 8px; }
-        .btn-calc:hover { background: #113b6b; }
-        
-        .result-box { margin-top: 15px; padding: 12px; background: #f8fafc; border-left: 4px solid var(--secondary-color); border-radius: 4px; display: none; }
-        .result-box h3 { font-size: 0.8rem; color: #64748b; text-transform: uppercase; margin-bottom: 4px; }
-        .result-box .main-value { font-size: 1.4rem; font-weight: bold; color: var(--primary-color); }
-        .result-box .sub-value { font-size: 0.8rem; color: #64748b; margin-top: 2px; }
-        .alert-box { margin-top: 10px; padding: 8px; background: #fffbeb; border-left: 4px solid #f59e0b; color: #b45309; border-radius: 4px; font-size: 0.8rem; display: none; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding: 2rem 1rem; line-height: 1.5; }
+        .container { max-width: 600px; margin: 0 auto; background: var(--card-bg); padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        h1 { font-size: 1.5rem; margin-bottom: 1.5rem; text-align: center; color: #0f172a; }
+        .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
+        .tab-btn { flex: 1; padding: 0.75rem; border: none; background: none; font-size: 0.95rem; font-weight: 600; color: var(--text-light); cursor: pointer; border-radius: 6px; transition: all 0.2s; }
+        .tab-btn.active { background: var(--primary); color: white; }
+        .form-group { margin-bottom: 1.25rem; }
+        label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.375rem; color: var(--text); }
+        .input-wrapper { position: relative; }
+        input { width: 100%; padding: 0.625rem 2rem 0.625rem 0.75rem; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; color: var(--text); background: #fff; }
+        input:focus { outline: 2px solid var(--primary); outline-offset: -1px; }
+        .currency { position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--text-light); font-size: 0.875rem; pointer-events: none; }
+        button.calc-btn { width: 100%; padding: 0.75rem; background: var(--primary); color: white; border: none; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 0.5rem; transition: background 0.2s; }
+        button.calc-btn:hover { background: var(--primary-hover); }
+        .result-box { margin-top: 1.5rem; padding: 1.25rem; background: #f1f5f9; border-radius: 8px; border-left: 4px solid var(--primary); display: none; }
+        .result-box h3 { font-size: 1rem; margin-bottom: 0.75rem; color: #334155; }
+        .result-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.95rem; }
+        .result-row.total { font-weight: 700; border-top: 1px solid var(--border); padding-top: 0.5rem; margin-top: 0.5rem; font-size: 1.1rem; color: var(--success); }
+        .hint { display: none; margin-top: 1rem; padding: 0.75rem; background: #fff7ed; border: 1px solid #ffedd5; border-radius: 6px; color: var(--accent); font-size: 0.875rem; }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <div class="header">
-        <h1>ERZ-com.net</h1>
-        <p>Handyshops Olbernhau + Marienberg</p>
-    </div>
+<div class="container">
+    <h1>--- Vertragsrechner ---</h1>
     
-    <input type="radio" id="radio-marge" name="tab-group" class="tab-radio" checked>
-    <input type="radio" id="radio-preis" name="tab-group" class="tab-radio">
-
-    <div class="tabs-nav">
-        <label for="radio-marge" class="tab-label label-marge">Marge berechnen</label>
-        <label for="radio-preis" class="tab-label label-preis">Preis kalkulieren</label>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('marge')">Gesamtmarge berechnen</button>
+        <button class="tab-btn" onclick="switchTab('mindestmarge')">Mindestmarge errechnen</button>
     </div>
 
-    <div class="content-panes">
-        <!-- TAB 1: MARGE -->
-        <div id="tab-marge" class="tab-content">
-            <div class="input-group"><label>Brutto-Verkaufspreis (vom Kunden)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="m-brutto-vk" placeholder="0,00"></div></div>
-            <div class="input-group"><label>Einkaufspreis / Warenkosten (netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="m-netto-ek" placeholder="0,00"></div></div>
-            <div class="input-group"><label>Provision (erhalten, netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="m-provision" placeholder="0,00"></div></div>
-            <div class="input-group">
-                <label>NBA (netto)</label>
-                <div class="input-wrapper select-wrapper">
-                    <select id="m-nba">
-                        <option value="0">kein</option>
-                        <option value="40">40 €</option>
-                        <option value="80">80 €</option>
-                    </select>
-                </div>
-            </div>
-            <button class="btn-calc" onclick="kalkuliereMarge()">Gewinn berechnen</button>
-            <div id="res-marge" class="result-box">
-                <h3>Ihr Nettogewinn (Gesamtmarge)</h3>
-                <div class="main-value" id="val-marge-gewinn">0,00 €</div>
-                <div class="sub-value" id="val-marge-netto-vk">Netto-VK: 0,00 €</div>
-            </div>
+    <!-- Modus 1: Gesamtmarge -->
+    <div id="form-marge">
+        <div class="form-group">
+            <label>Brutto-Verkaufspreis (vom Kunden):</label>
+            <div class="input-wrapper"><input type="number" id="m1-brutto-vk" step="0.01" value="0.00"><span class="currency">€</span></div>
         </div>
+        <div class="form-group">
+            <label>Einkaufspreis/Warenkosten (netto):</label>
+            <div class="input-wrapper"><input type="number" id="m1-netto-ek" step="0.01" value="0.00"><span class="currency">€</span></div>
+        </div>
+        <div class="form-group">
+            <label>Provision (erhalten, netto):</label>
+            <div class="input-wrapper"><input type="number" id="m1-provision" step="0.01" value="0.00"><span class="currency">€</span></div>
+        </div>
+        <div class="form-group">
+            <label>NBA (netto):</label>
+            <div class="input-wrapper"><input type="number" id="m1-nba" step="0.01" value="0.00"><span class="currency">€</span></div>
+        </div>
+        <button class="calc-btn" onclick="berechneMarge()">Berechnen</button>
+    </div>
 
-        <!-- TAB 2: PREIS -->
-        <div id="tab-preis" class="tab-content">
-            <div class="input-group"><label>Einkaufspreis / Warenkosten (netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="p-netto-ek" placeholder="0,00"></div></div>
-            <div class="input-group"><label>Provision (erhalten, netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="p-provision" placeholder="0,00"></div></div>
-            <div class="input-group">
-                <label>NBA (netto)</label>
-                <div class="input-wrapper select-wrapper">
-                    <select id="p-nba">
-                        <option value="0">kein</option>
-                        <option value="40">40 €</option>
-                        <option value="80">80 €</option>
-                    </select>
-                </div>
-            </div>
-            <div class="input-group"><label>Gewünschter Ziel-Nettogewinn (Mindestmarge)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="p-ziel-gewinn" placeholder="0,00"></div></div>
-            <button class="btn-calc" onclick="kalkulierePreis()">Verkaufspreis ermitteln</button>
-            <div id="alert-preis" class="alert-box">🚨 Hinweis: Provision & NBA decken die Kosten. Mindestpreis angewendet.</div>
-            <div id="res-preis" class="result-box">
-                <h3>Erforderlicher Brutto-Verkaufspreis</h3>
-                <div class="main-value" id="val-preis-brutto">0,00 €</div>
-                <div class="sub-value" id="val-preis-netto">Erforderlicher Netto-VK: 0,00 €</div>
-            </div>
+    <!-- Modus 2: Mindestmarge -->
+    <div id="form-mindestmarge" style="display: none;">
+        <div class="form-group">
+            <label>Einkaufspreis/Warenkosten (netto):</label>
+            <div class="input-wrapper"><input type="number" id="m2-netto-ek" step="0.01" value="0.00"><span class="currency">€</span></div>
         </div>
+        <div class="form-group">
+            <label>Provision (erhalten, netto):</label>
+            <div class="input-wrapper"><input type="number" id="m2-provision" step="0.01" value="0.00"><span class="currency">€</span></div>
+        </div>
+        <div class="form-group">
+            <label>NBA (netto):</label>
+            <div class="input-wrapper"><input type="number" id="m2-nba" step="0.01" value="0.00"><span class="currency">€</span></div>
+        </div>
+        <div class="form-group">
+            <label>Gewünschter Ziel-Nettogewinn (Mindestmarge):</label>
+            <div class="input-wrapper"><input type="number" id="m2-ziel-gewinn" step="0.01" value="0.00"><span class="currency">€</span></div>
+        </div>
+        <button class="calc-btn" onclick="berechneMindestpreis()">Preis kalkulieren</button>
+    </div>
+
+    <!-- Ergebnisanzeige -->
+    <div id="hint-box" class="hint"></div>
+    <div id="result-box" class="result-box">
+        <h3>Ergebnis</h3>
+        <div id="result-details"></div>
     </div>
 </div>
 
@@ -127,51 +105,88 @@
 
     function bruttoZuNetto(brutto) { return brutto / (1 + (MWST_SATZ / 100)); }
     function nettoZuBrutto(netto) { return netto * (1 + (MWST_SATZ / 100)); }
-    
-    function holeWert(id) { 
-        const el = document.getElementById(id);
-        if (!el) return 0;
-        let wertText = el.value.toString().replace(',', '.').trim();
-        return parseFloat(wertText) || 0; 
-    }
-    
-    function formatEuro(wert) { return wert.toFixed(2).replace('.', ',') + " €"; }
 
     function rundeAufX990(preis) {
         if (preis <= 0) return MIN_BRUTTO_VK;
         let naechsterZehner = Math.ceil(preis / 10.0) * 10.0;
         let preisX990 = naechsterZehner - (1.00 - MARKETING_ENDING);
-        if (preisX990 < preis) { preisX990 = (naechsterZehner + 10.0) - (1.00 - MARKETING_ENDING); }
+        if (preisX990 < preis) {
+            preisX990 = (naechsterZehner + 10.0) - (1.00 - MARKETING_ENDING);
+        }
         return preisX990;
     }
 
-    function kalkuliereMarge() {
-        let bruttoVk = holeWert('m-brutto-vk');
-        let nettoEk = holeWert('m-netto-ek');
-        let provision = holeWert('m-provision');
-        let nba = holeWert('m-nba'); // Dropdown-Wert auslesen funktioniert jetzt sicher
-        let nettoVk = bruttoZuNetto(bruttoVk);
-        let gewinn = (nettoVk + provision + nba) - nettoEk;
+    function switchTab(mode) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('result-box').style.display = 'none';
+        document.getElementById('hint-box').style.display = 'none';
         
-        document.getElementById('val-marge-gewinn').innerText = formatEuro(gewinn);
-        document.getElementById('val-marge-netto-vk').innerText = "Netto-VK: " + formatEuro(nettoVk);
-        document.getElementById('res-marge').style.display = 'block';
+        if(mode === 'marge') {
+            document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+            document.getElementById('form-marge').style.display = 'block';
+            document.getElementById('form-mindestmarge').style.display = 'none';
+        } else {
+            document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+            document.getElementById('form-marge').style.display = 'none';
+            document.getElementById('form-mindestmarge').style.display = 'block';
+        }
     }
 
-    function kalkulierePreis() {
-        let nettoEk = holeWert('p-netto-ek');
-        let provision = holeWert('p-provision');
-        let nba = holeWert('p-nba'); // Dropdown-Wert auslesen funktioniert jetzt sicher
-        let zielGewinn = holeWert('p-ziel-gewinn');
+    function berechneMarge() {
+        let bruttoVk = parseFloat(document.getElementById('m1-brutto-vk').value) || 0;
+        let nettoEk = parseFloat(document.getElementById('m1-netto-ek').value) || 0;
+        let provision = parseFloat(document.getElementById('m1-provision').value) || 0;
+        let nba = parseFloat(document.getElementById('m1-nba').value) || 0;
+
+        let nettoVk = bruttoZuNetto(bruttoVk);
+        let nettogewinn = (nettoVk + provision + nba) - nettoEk;
+
+        document.getElementById('hint-box').style.display = 'none';
+        let html = `
+            <div class="result-row"><span>Brutto-Verkaufspreis:</span><span>${bruttoVk.toFixed(2)} €</span></div>
+            <div class="result-row"><span>Netto-Einkaufspreis:</span><span>${nettoEk.toFixed(2)} €</span></div>
+            <div class="result-row"><span>Netto-Provision:</span><span>${provision.toFixed(2)} €</span></div>
+            <div class="result-row"><span>NBA:</span><span>${nba.toFixed(2)} €</span></div>
+            <div class="result-row total"><span>Nettogewinn (Gesamtmarge):</span><span>${nettogewinn.toFixed(2)} €</span></div>
+        `;
+        document.getElementById('result-details').innerHTML = html;
+        document.getElementById('result-box').style.display = 'block';
+    }
+
+    function berechneMindestpreis() {
+        let nettoEk = parseFloat(document.getElementById('m2-netto-ek').value) || 0;
+        let provision = parseFloat(document.getElementById('m2-provision').value) || 0;
+        let nba = parseFloat(document.getElementById('m2-nba').value) || 0;
+        let zielGewinn = parseFloat(document.getElementById('m2-ziel-gewinn').value) || 0;
+
         let erfNettoVkIdeal = (nettoEk + zielGewinn) - provision - nba;
         let minNettoVk = bruttoZuNetto(MIN_BRUTTO_VK);
-        let bruttoFinal = 0;
-        
+        let erfBruttoVkFinal = 0;
+        let hintBox = document.getElementById('hint-box');
+
         if (erfNettoVkIdeal <= minNettoVk) {
-            bruttoFinal = MIN_BRUTTO_VK;
-            document.getElementById('alert-preis').style.display = 'block';
+            erfBruttoVkFinal = MIN_BRUTTO_VK;
+            hintBox.innerText = "🚨 Hinweis: Die Provision und NBA decken die Kosten und den Zielgewinn. Der Preis wurde auf den Mindest-Bruttopreis von 1,00 € gesetzt.";
+            hintBox.style.display = 'block';
         } else {
-            bruttoFinal = rundeAufX990(nettoZuBrutto(erfNettoVkIdeal));
-            document.getElementById('alert-preis').style.display = 'none';
+            let erfBruttoVkUngewollt = nettoZuBrutto(erfNettoVkIdeal);
+            erfBruttoVkFinal = rundeAufX990(erfBruttoVkUngewollt);
+            hintBox.style.display = 'none';
         }
-        
+
+        let html = `
+            <div class="result-row"><span>Ziel-Nettogewinn:</span><span>${zielGewinn.toFixed(2)} €</span></div>
+            <div class="result-row"><span>Netto-Einkaufspreis:</span><span>${nettoEk.toFixed(2)} €</span></div>
+            <div class="result-row"><span>Netto-Provision:</span><span>${provision.toFixed(2)} €</span></div>
+            <div class="result-row"><span>NBA:</span><span>${nba.toFixed(2)} €</span></div>
+            <div class="result-row total"><span>Erforderlicher Brutto-VK (final):</span><span>${erfBruttoVkFinal.toFixed(2)} €</span></div>
+            <div class="result-row" style="margin-top:0.25rem; font-size:0.85rem; color:var(--text-light);">
+                <span>Erforderlicher Netto-VK (vom Kunden):</span><span>${bruttoZuNetto(erfBruttoVkFinal).toFixed(2)} €</span>
+            </div>
+        `;
+        document.getElementById('result-details').innerHTML = html;
+        document.getElementById('result-box').style.display = 'block';
+    }
+</script>
+</body>
+</html>
