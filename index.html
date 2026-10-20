@@ -4,39 +4,178 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ERZ-com Vertragsrechner</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="icon" type="image/png" href="icon.png">
+
     <style>
         :root {
-            --primary-color: #0b2d54;
-            --secondary-color: #71be16;
-            --bg-color: #f4f6f9;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --border-color: #e2e8f0;
+            --bg-dark: #070f1e;        /* Tiefes, modernes Dunkelblau-Schwarz */
+            --card-bg: #0f1b2f;       /* Edles Dunkelblau für Kacheln */
+            --primary: #1a4273;       /* Akzent-Blau */
+            --accent-green: #71be16;  /* Das originale ERZ-com Grün */
+            --text-main: #f1f5f9;     /* Klares Weiß für Texte */
+            --text-muted: #94a3b8;    /* Sanftes Grau für Labels */
+            --border-color: #1e293b;  /* Subtile Trennlinien */
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
-        .app-container { background: var(--card-bg); width: 100%; max-width: 450px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow: hidden; border: 1px solid var(--border-color); }
-        .header { background: var(--primary-color); color: white; padding: 20px; text-align: center; border-bottom: 4px solid var(--secondary-color); }
-        .header h1 { font-size: 1.3rem; margin-bottom: 4px; }
-        .header p { font-size: 0.85rem; opacity: 0.9; }
-        .tabs { display: flex; background: #edf2f7; }
-        .tab-btn { flex: 1; padding: 12px; border: none; background: none; font-size: 0.9rem; font-weight: bold; color: #64748b; cursor: pointer; text-align: center; }
-        .tab-btn.active { color: var(--primary-color); background: white; border-bottom: 3px solid var(--primary-color); }
-        .content { padding: 20px; }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        
+        body { 
+            background-color: var(--bg-dark); 
+            color: var(--text-main); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            padding: 16px;
+        }
+
+        .app-container { 
+            background: var(--card-bg); 
+            width: 100%; 
+            max-width: 440px; 
+            border-radius: 24px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5); 
+            overflow: hidden; 
+            border: 1px solid var(--border-color);
+            padding: 24px;
+        }
+
+        .header { 
+            text-align: center; 
+            margin-bottom: 24px; 
+        }
+        
+        .header h1 { 
+            font-size: 1.6rem; 
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff, var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+        
+        .header p { 
+            font-size: 0.85rem; 
+            color: var(--text-muted); 
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Unsichtbare Radio-Buttons steuern die Tabs */
+        .tab-radio { display: none; }
+        
+        /* Modernes Schieberegler-Design (Pill-Selector) */
+        .tabs-nav { 
+            display: flex; 
+            background: var(--bg-dark); 
+            padding: 6px;
+            border-radius: 14px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        
+        .tab-label { 
+            flex: 1; 
+            padding: 10px; 
+            font-size: 0.9rem; 
+            font-weight: 600; 
+            color: var(--text-muted); 
+            cursor: pointer; 
+            text-align: center; 
+            z-index: 2;
+            transition: color 0.3s ease;
+        }
+        
         .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .input-group { margin-bottom: 14px; }
-        .input-group label { display: block; font-size: 0.8rem; font-weight: bold; margin-bottom: 4px; color: #475569; }
+        
+        /* Steuerungslogik via CSS */
+        #radio-marge:checked ~ .tabs-nav .label-marge { color: var(--text-main); background: var(--card-bg); border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        #radio-preis:checked ~ .tabs-nav .label-preis { color: var(--text-main); background: var(--card-bg); border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        
+        #radio-marge:checked ~ .content-panes #tab-marge { display: block; }
+        #radio-preis:checked ~ .content-panes #tab-preis { display: block; }
+
+        .input-group { margin-bottom: 18px; }
+        .input-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        /* Futuristische Eingabefelder */
         .input-wrapper { position: relative; display: flex; align-items: center; }
-        .input-wrapper input { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1rem; outline: none; }
-        .input-wrapper::after { content: "€"; position: absolute; right: 12px; color: #94a3b8; font-weight: bold; }
-        .btn-calc { width: 100%; padding: 12px; background: var(--primary-color); color: white; border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 8px; }
-        .btn-calc:hover { background: #113b6b; }
-        .result-box { margin-top: 15px; padding: 12px; background: #f8fafc; border-left: 4px solid var(--secondary-color); border-radius: 4px; display: none; }
-        .result-box h3 { font-size: 0.8rem; color: #64748b; text-transform: uppercase; margin-bottom: 4px; }
-        .result-box .main-value { font-size: 1.4rem; font-weight: bold; color: var(--primary-color); }
-        .result-box .sub-value { font-size: 0.8rem; color: #64748b; margin-top: 2px; }
-        .alert-box { margin-top: 10px; padding: 8px; background: #fffbeb; border-left: 4px solid #f59e0b; color: #b45309; border-radius: 4px; font-size: 0.8rem; display: none; }
+        .input-wrapper input, .input-wrapper select { 
+            width: 100%; 
+            padding: 12px 38px 12px 14px; 
+            border: 1.5px solid var(--border-color); 
+            border-radius: 12px; 
+            font-size: 1.05rem; 
+            outline: none; 
+            background: var(--bg-dark); 
+            color: var(--text-main);
+            transition: all 0.25s ease;
+            -webkit-appearance: none; 
+            appearance: none; 
+        }
+        
+        .input-wrapper input:focus, .input-wrapper select:focus { 
+            border-color: var(--accent-green); 
+            box-shadow: 0 0 0 3px rgba(113, 190, 22, 0.15);
+        }
+        
+        .input-wrapper::after { content: "€"; position: absolute; right: 16px; color: var(--text-muted); font-weight: bold; pointer-events: none; }
+        .input-wrapper.select-wrapper::after { content: "▼"; color: var(--text-muted); font-size: 0.75rem; right: 16px; }
+        
+        /* Moderner Aktions-Button */
+        .btn-calc { 
+            width: 100%; 
+            padding: 14px; 
+            background: linear-gradient(135deg, var(--accent-green), #5ba30f); 
+            color: var(--bg-dark); 
+            border: none; 
+            border-radius: 12px; 
+            font-size: 1.05rem; 
+            font-weight: 700; 
+            cursor: pointer; 
+            margin-top: 10px; 
+            box-shadow: 0 8px 20px rgba(113, 190, 22, 0.25);
+            transition: all 0.2s ease;
+        }
+        .btn-calc:active { transform: scale(0.98); box-shadow: 0 4px 10px rgba(113, 190, 22, 0.2); }
+        
+        /* Stilvolle Dashboard-Ergebnisbox */
+        .result-box { 
+            margin-top: 24px; 
+            padding: 18px; 
+            background: linear-gradient(135deg, #13243d, #0f1b2f); 
+            border-radius: 16px; 
+            border: 1px solid rgba(113, 190, 22, 0.3);
+            display: none; 
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-box h3 { font-size: 0.75rem; color: var(--accent-green); text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; }
+        .result-box .main-value { font-size: 1.8rem; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; }
+        .result-box .sub-value { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+        
+        /* Dezente Warnmeldung */
+        .alert-box { 
+            margin-top: 14px; 
+            padding: 10px 14px; 
+            background: rgba(245, 158, 11, 0.1); 
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            color: #fbbf24; 
+            border-radius: 10px; 
+            font-size: 0.8rem; 
+            display: none; 
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
@@ -44,24 +183,36 @@
 <div class="app-container">
     <div class="header">
         <h1>ERZ-com.net</h1>
-        <p>Handyshops Olbernhau + Marienberg</p>
+        <p>Vertragsrechner</p>
     </div>
     
-    <div class="tabs">
-        <button id="btn-marge" class="tab-btn active" onclick="switchTab('marge')">Marge berechnen</button>
-        <button id="btn-preis" class="tab-btn" onclick="switchTab('preis')">Preis kalkulieren</button>
+    <input type="radio" id="radio-marge" name="tab-group" class="tab-radio" checked>
+    <input type="radio" id="radio-preis" name="tab-group" class="tab-radio">
+
+    <div class="tabs-nav">
+        <label for="radio-marge" class="tab-label label-marge">Marge</label>
+        <label for="radio-preis" class="tab-label label-preis">Preiskalkulation</label>
     </div>
 
-    <div class="content">
+    <div class="content-panes">
         <!-- TAB 1: MARGE -->
-        <div id="tab-marge" class="tab-content active">
-            <div class="input-group"><label>Brutto-Verkaufspreis (vom Kunden)</label><div class="input-wrapper"><input type="number" step="0.01" id="m-brutto-vk"></div></div>
-            <div class="input-group"><label>Einkaufspreis / Warenkosten (netto)</label><div class="input-wrapper"><input type="number" step="0.01" id="m-netto-ek"></div></div>
-            <div class="input-group"><label>Provision (erhalten, netto)</label><div class="input-wrapper"><input type="number" step="0.01" id="m-provision"></div></div>
-            <div class="input-group"><label>NBA (netto)</label><div class="input-wrapper"><input type="number" step="0.01" id="m-nba"></div></div>
+        <div id="tab-marge" class="tab-content">
+            <div class="input-group"><label>Brutto-Verkaufspreis</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="m-brutto-vk" placeholder="0,00"></div></div>
+            <div class="input-group"><label>Einkaufspreis (netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="m-netto-ek" placeholder="0,00"></div></div>
+            <div class="input-group"><label>Provision (netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="m-provision" placeholder="0,00"></div></div>
+            <div class="input-group">
+                <label>NBA (netto)</label>
+                <div class="input-wrapper select-wrapper">
+                    <select id="m-nba">
+                        <option value="0">kein</option>
+                        <option value="40">40 €</option>
+                        <option value="80">80 €</option>
+                    </select>
+                </div>
+            </div>
             <button class="btn-calc" onclick="kalkuliereMarge()">Gewinn berechnen</button>
             <div id="res-marge" class="result-box">
-                <h3>Ihr Nettogewinn (Gesamtmarge)</h3>
+                <h3>Nettogewinn (Gesamtmarge)</h3>
                 <div class="main-value" id="val-marge-gewinn">0,00 €</div>
                 <div class="sub-value" id="val-marge-netto-vk">Netto-VK: 0,00 €</div>
             </div>
@@ -69,84 +220,16 @@
 
         <!-- TAB 2: PREIS -->
         <div id="tab-preis" class="tab-content">
-            <div class="input-group"><label>Einkaufspreis / Warenkosten (netto)</label><div class="input-wrapper"><input type="number" step="0.01" id="p-netto-ek"></div></div>
-            <div class="input-group"><label>Provision (erhalten, netto)</label><div class="input-wrapper"><input type="number" step="0.01" id="p-provision"></div></div>
-            <div class="input-group"><label>NBA (netto)</label><div class="input-wrapper"><input type="number" step="0.01" id="p-nba"></div></div>
-            <div class="input-group"><label>Gewünschter Ziel-Nettogewinn (Mindestmarge)</label><div class="input-wrapper"><input type="number" step="0.01" id="p-ziel-gewinn"></div></div>
-            <button class="btn-calc" onclick="kalkulierePreis()">Verkaufspreis ermitteln</button>
-            <div id="alert-preis" class="alert-box">🚨 Hinweis: Provision & NBA decken die Kosten. Mindestpreis angewendet.</div>
-            <div id="res-preis" class="result-box">
-                <h3>Erforderlicher Brutto-Verkaufspreis</h3>
-                <div class="main-value" id="val-preis-brutto">0,00 €</div>
-                <div class="sub-value" id="val-preis-netto">Erforderlicher Netto-VK: 0,00 €</div>
+            <div class="input-group"><label>Einkaufspreis (netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="p-netto-ek" placeholder="0,00"></div></div>
+            <div class="input-group"><label>Provision (netto)</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="p-provision" placeholder="0,00"></div></div>
+            <div class="input-group">
+                <label>NBA (netto)</label>
+                <div class="input-wrapper select-wrapper">
+                    <select id="p-nba">
+                        <option value="0">kein</option>
+                        <option value="40">40 €</option>
+                        <option value="80">80 €</option>
+                    </select>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    const MWST_SATZ = 19.0;
-    const MIN_BRUTTO_VK = 1.00;
-    const MARKETING_ENDING = 0.90;
-
-    function bruttoZuNetto(brutto) { return brutto / (1 + (MWST_SATZ / 100)); }
-    function nettoZuBrutto(netto) { return netto * (1 + (MWST_SATZ / 100)); }
-    function holeWert(id) { return parseFloat(document.getElementById(id).value) || 0; }
-    function formatEuro(wert) { return wert.toFixed(2).replace('.', ',') + " €"; }
-
-    function rundeAufX990(preis) {
-        if (preis <= 0) return MIN_BRUTTO_VK;
-        let naechsterZehner = Math.ceil(preis / 10.0) * 10.0;
-        let preisX990 = naechsterZehner - (1.00 - MARKETING_ENDING);
-        if (preisX990 < preis) { preisX990 = (naechsterZehner + 10.0) - (1.00 - MARKETING_ENDING); }
-        return preisX990;
-    }
-
-    function switchTab(mode) {
-        if (mode === 'marge') {
-            document.getElementById('btn-marge').className = 'tab-btn active';
-            document.getElementById('btn-preis').className = 'tab-btn';
-            document.getElementById('tab-marge').className = 'tab-content active';
-            document.getElementById('tab-preis').className = 'tab-content';
-        } else {
-            document.getElementById('btn-marge').className = 'tab-btn';
-            document.getElementById('btn-preis').className = 'tab-btn active';
-            document.getElementById('tab-marge').className = 'tab-content';
-            document.getElementById('tab-preis').className = 'tab-content active';
-        }
-    }
-
-    function kalkuliereMarge() {
-        let bruttoVk = holeWert('m-brutto-vk');
-        let nettoEk = holeWert('m-netto-ek');
-        let provision = holeWert('m-provision');
-        let nba = holeWert('m-nba');
-        let nettoVk = bruttoZuNetto(bruttoVk);
-        let gewinn = (nettoVk + provision + nba) - nettoEk;
-        document.getElementById('val-marge-gewinn').innerText = formatEuro(gewinn);
-        document.getElementById('val-marge-netto-vk').innerText = "Netto-VK: " + formatEuro(nettoVk);
-        document.getElementById('res-marge').style.display = 'block';
-    }
-
-    function kalkulierePreis() {
-        let nettoEk = holeWert('p-netto-ek');
-        let provision = holeWert('p-provision');
-        let nba = holeWert('p-nba');
-        let zielGewinn = holeWert('p-ziel-gewinn');
-        let erfNettoVkIdeal = (nettoEk + zielGewinn) - provision - nba;
-        let minNettoVk = bruttoZuNetto(MIN_BRUTTO_VK);
-        let bruttoFinal = 0;
-        if (erfNettoVkIdeal <= minNettoVk) {
-            bruttoFinal = MIN_BRUTTO_VK;
-            document.getElementById('alert-preis').style.display = 'block';
-        } else {
-            bruttoFinal = rundeAufX990(nettoZuBrutto(erfNettoVkIdeal));
-            document.getElementById('alert-preis').style.display = 'none';
-        }
-        document.getElementById('val-preis-brutto').innerText = formatEuro(bruttoFinal);
-        document.getElementById('val-preis-netto').innerText = "Erforderlicher Netto-VK: " + formatEuro(bruttoZuNetto(bruttoFinal));
-        document.getElementById('res-preis').style.display = 'block';
-    }
-</script>
-</body>
-</html>
+            <div class="input-group"><label>Ziel-Nettogewinn</label><div class="input-wrapper"><input type="text" inputmode="decimal" id="p-ziel-gewinn" placeholder="0,00"></div></div>
