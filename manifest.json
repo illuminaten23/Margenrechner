@@ -3,13 +3,13 @@
   "name": "ERZ-com Vertragsrechner",
   "icons": [
     {
-      "src": "icon.jpg",
-      "type": "image/jpeg",
+      "src": "icon.png",
+      "type": "image/png",
       "sizes": "512x512",
       "purpose": "any maskable"
     }
   ],
-  "start_url": "rechner.html",
+  "start_url": "index.html",
   "background_color": "#070f1e",
   "theme_color": "#070f1e",
   "display": "standalone",
