@@ -298,10 +298,17 @@
     }
 
     // --- Tab-Steuerung ---
-    function switchTab(mode) {
-        // Zuerst alle Tabs und Buttons deaktivieren
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        
-        // Gezielt das gewählte Element aktivieren
-        if(mode === 'marge') {
+  function switchTab(mode) {
+    // Zuerst alle Tabs und Buttons deaktivieren
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    
+    // Gezielt das gewählte Element aktivieren
+    if(mode === 'marge') {
+        document.getElementById('btn-marge').classList.add('active');
+        document.getElementById('tab-marge').classList.add('active');
+    } else {
+        document.getElementById('btn-preis').classList.add('active');
+        document.getElementById('tab-preis').classList.add('active');
+    }
+}
