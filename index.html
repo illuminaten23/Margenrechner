@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ERZ-com Vertragsrechner</title>
     
-    <!-- Verknüpfung für das App-Icon und die App-Installation -->
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon.png">
     <link rel="icon" type="image/png" href="icon.png">
@@ -36,10 +35,8 @@
         .input-wrapper { position: relative; display: flex; align-items: center; }
         .input-wrapper input, .input-wrapper select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1rem; outline: none; background: white; -webkit-appearance: none; appearance: none; }
         .input-wrapper::after { content: "€"; position: absolute; right: 12px; color: #94a3b8; font-weight: bold; pointer-events: none; }
-        /* Spezielle Pfeil-Optik für das Auswahlfeld */
         .input-wrapper.select-wrapper::after { content: "▼"; color: #64748b; font-size: 0.8rem; right: 14px; }
         .btn-calc { width: 100%; padding: 12px; background: var(--primary-color); color: white; border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 8px; }
-        .btn-calc:hover { background: #113b6b; }
         .result-box { margin-top: 15px; padding: 12px; background: #f8fafc; border-left: 4px solid var(--secondary-color); border-radius: 4px; display: none; }
         .result-box h3 { font-size: 0.8rem; color: #64748b; text-transform: uppercase; margin-bottom: 4px; }
         .result-box .main-value { font-size: 1.4rem; font-weight: bold; color: var(--primary-color); }
@@ -117,7 +114,12 @@
 
     function bruttoZuNetto(brutto) { return brutto / (1 + (MWST_SATZ / 100)); }
     function nettoZuBrutto(netto) { return netto * (1 + (MWST_SATZ / 100)); }
-    function holeWert(id) { return parseFloat(document.getElementById(id).value) || 0; }
+    
+    function holeWert(id) { 
+        const el = document.getElementById(id);
+        return el ? (parseFloat(el.value) || 0) : 0; 
+    }
+    
     function formatEuro(wert) { return wert.toFixed(2).replace('.', ',') + " €"; }
 
     function rundeAufX990(preis) {
@@ -129,16 +131,23 @@
     }
 
     function switchTab(mode) {
+        const btnMarge = document.getElementById('btn-marge');
+        const btnPreis = document.getElementById('btn-preis');
+        const tabMarge = document.getElementById('tab-marge');
+        const tabPreis = document.getElementById('tab-preis');
+
+        if (!btnMarge || !btnPreis || !tabMarge || !tabPreis) return;
+
         if (mode === 'marge') {
-            document.getElementById('btn-marge').className = 'tab-btn active';
-            document.getElementById('btn-preis').className = 'tab-btn';
-            document.getElementById('tab-marge').className = 'tab-content active';
-            document.getElementById('tab-preis').className = 'tab-content';
+            btnMarge.className = 'tab-btn active';
+            btnPreis.className = 'tab-btn';
+            tabMarge.className = 'tab-content active';
+            tabPreis.className = 'tab-content';
         } else {
-            document.getElementById('btn-marge').className = 'tab-btn';
-            document.getElementById('btn-preis').className = 'tab-btn active';
-            document.getElementById('tab-marge').className = 'tab-content';
-            document.getElementById('tab-preis').className = 'tab-content active';
+            btnMarge.className = 'tab-btn';
+            btnPreis.className = 'tab-btn active';
+            tabMarge.className = 'tab-content';
+            tabPreis.className = 'tab-content active';
         }
     }
 
@@ -146,26 +155,35 @@
         let bruttoVk = holeWert('m-brutto-vk');
         let nettoEk = holeWert('m-netto-ek');
         let provision = holeWert('m-provision');
-        let nba = holeWert('m-nba'); // Holt automatisch 0, 40 oder 80 aus dem Auswahlfeld
+        let nba = holeWert('m-nba');
         let nettoVk = bruttoZuNetto(bruttoVk);
         let gewinn = (nettoVk + provision + nba) - nettoEk;
-        document.getElementById('val-marge-gewinn').innerText = formatEuro(gewinn);
-        document.getElementById('val-marge-netto-vk').innerText = "Netto-VK: " + formatEuro(nettoVk);
-        document.getElementById('res-marge').style.display = 'block';
+        
+        const resBox = document.getElementById('res-marge');
+        if (resBox) {
+            document.getElementById('val-marge-gewinn').innerText = formatEuro(gewinn);
+            document.getElementById('val-marge-netto-vk').innerText = "Netto-VK: " + formatEuro(nettoVk);
+            resBox.style.display = 'block';
+        }
     }
 
     function kalkulierePreis() {
         let nettoEk = holeWert('p-netto-ek');
         let provision = holeWert('p-provision');
-        let nba = holeWert('p-nba'); // Holt automatisch 0, 40 oder 80 aus dem Auswahlfeld
+        let nba = holeWert('p-nba');
         let zielGewinn = holeWert('p-ziel-gewinn');
         let erfNettoVkIdeal = (nettoEk + zielGewinn) - provision - nba;
         let minNettoVk = bruttoZuNetto(MIN_BRUTTO_VK);
         let bruttoFinal = 0;
+        
+        const alertBox = document.getElementById('alert-preis');
+        const resBox = document.getElementById('res-preis');
+
         if (erfNettoVkIdeal <= minNettoVk) {
             bruttoFinal = MIN_BRUTTO_VK;
-            document.getElementById('alert-preis').style.display = 'block';
+            if (alertBox) alertBox.style.display = 'block';
         } else {
             bruttoFinal = rundeAufX990(nettoZuBrutto(erfNettoVkIdeal));
-            document.getElementById('alert-preis').style.display = 'none';
+            if (alertBox) alertBox.style.display = 'none';
         }
+        
