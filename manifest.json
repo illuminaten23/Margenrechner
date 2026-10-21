@@ -3,8 +3,8 @@
   "name": "ERZ-com Vertragsrechner",
   "icons": [
     {
-      "src": "icon.png",
-      "type": "image/png",
+      "src": "data:image/svg+xml,<svg xmlns=%22http://w3.org viewBox=%220 0 512 512%22 width=%22512%22 height=%22512%22><rect width=%22512%22 height=%22512%22 rx=%22110%22 fill=%22%230b2d54%22/><circle cx=%22256%22 cy=%22220%22 r=%2260%22 fill=%22none%22 stroke=%22white%22 stroke-width=%2216%22/><path d=%22M180 360 h152 M210 310 h92 M256 120 v40%22 stroke=%22%2371be16%22 stroke-width=%2218%22 stroke-linecap=%22round%22/><path d=%22M210 220 h92 M256 174 v92%22 stroke=%22white%22 stroke-width=%2214%22 stroke-linecap=%22round%22/></svg>",
+      "type": "image/svg+xml",
       "sizes": "512x512",
       "purpose": "any maskable"
     }
