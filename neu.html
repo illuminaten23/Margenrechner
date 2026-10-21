@@ -1,278 +1,280 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icon.png">
-    <link rel="icon" type="image/png" href="icon.png">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="icon" type="image/png" href="icon.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070f1e">
+  <title>ERZ-com | Vertragsrechner</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #070f1e;
+      --panel: #0f1b2f;
+      --green: #81d321;
+      --blue: #2699e8;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --line: #20334c;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 20px 12px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: radial-gradient(ellipse at 50% -15%, #173d68, transparent 48%), var(--bg);
+    }
+    button, input { font: inherit; }
+    .app { width: min(100%, 980px); margin: auto; }
+    .shell {
+      overflow: hidden;
+      border: 1px solid #1c3656;
+      border-radius: 26px;
+      background: linear-gradient(155deg, #0f1d31, #07111f);
+      box-shadow: 0 28px 80px #0008;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 24px;
+      border-bottom: 1px solid #1b304a;
+    }
+    .logo {
+      width: 64px;
+      height: 64px;
+      flex: 0 0 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border-radius: 18px;
+      background: #eaf5ff;
+      border: 1px solid #8fb9dc;
+      box-shadow: 0 5px 18px #0004;
+    }
+    .logo svg { display: block; width: 100%; height: 100%; flex: 0 0 auto; }
+    .brand { min-width: 0; }
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(1.5rem, 4vw, 2.15rem);
+      font-weight: 900;
+      letter-spacing: -.05em;
+    }
+    .brand h1 span { color: var(--green); }
+    .brand p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: .7rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      line-height: 1.5;
+    }
+    .header-right { margin-left: auto; text-align: right; flex-shrink: 0; }
+    .tag {
+      display: inline-block;
+      padding: 6px 10px;
+      border: 1px solid #294767;
+      border-radius: 999px;
+      color: #b9d3ef;
+      font-size: .7rem;
+    }
+    .slogan {
+      margin-top: 9px;
+      color: var(--green);
+      font-family: "Segoe Script", "Brush Script MT", cursive;
+      font-style: italic;
+      font-weight: 700;
+      font-size: 1.05rem;
+      text-shadow: 0 0 16px #81d32136;
+    }
+    .content { padding: 22px; }
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+      padding: 6px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #070f1e;
+      margin-bottom: 22px;
+    }
+    .tab {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 49px;
+      padding: 10px;
+      border: 0;
+      border-radius: 12px;
+      color: var(--muted);
+      background: transparent;
+      font-weight: 800;
+      cursor: pointer;
+      transition: .2s;
+    }
+    .tab[aria-selected="true"] {
+      color: white;
+      background: #14263e;
+      box-shadow: inset 0 0 0 1px #284566, 0 4px 14px #0003;
+    }
+    .tab[data-tab="marge"][aria-selected="true"] { color: var(--green); }
+    .tab[data-tab="preis"][aria-selected="true"] { color: var(--blue); }
+    .panels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .panel {
+      min-width: 0;
+      padding: 21px;
+      border: 1px solid #1d3c5e;
+      border-radius: 21px;
+      background: linear-gradient(155deg, #0c1d32, #091526);
+    }
+    .panel[hidden] { display: none; }
+    .panel-head { display: flex; align-items: center; gap: 12px; margin-bottom: 23px; }
+    .head-icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      border-radius: 15px;
+      color: var(--green);
+      background: #71be1614;
+      border: 1px solid #71be164d;
+      font-size: 24px;
+    }
+    .price .head-icon { color: var(--blue); background: #2586db19; border-color: #2586db5c; }
+    .panel-head h2 { margin: 0; font-size: 1.12rem; }
+    .panel-head p { margin: 5px 0 0; color: var(--muted); font-size: .74rem; line-height: 1.4; }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; margin-bottom: 8px; font-size: .84rem; font-weight: 700; }
+    .money-input {
+      display: flex;
+      align-items: center;
+      min-height: 54px;
+      border: 1px solid #294866;
+      border-radius: 13px;
+      background: #071426;
+      transition: .18s;
+    }
+    .money-input:focus-within {
+      border-color: var(--green);
+      background: #0c2036;
+      box-shadow: 0 0 0 3px #71be1617;
+    }
+    .price .money-input:focus-within { border-color: var(--blue); box-shadow: 0 0 0 3px #3b9df21a; }
+    .money-input input {
+      width: 100%;
+      min-width: 0;
+      padding: 13px 0 13px 15px;
+      border: 0;
+      outline: 0;
+      color: var(--text);
+      background: transparent;
+      font-size: 1.08rem;
+      font-weight: 700;
+    }
+    .money-input input::placeholder { color: #647b96; }
+    .currency { display: grid; place-items: center; align-self: stretch; flex: 0 0 45px; color: #a7bdd7; font-weight: 800; }
+    .btn {
+      position: relative;
+      isolation: isolate;
+      width: 100%;
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 7px 0 5px;
+      padding: 14px 16px;
+      border: 1px solid #b7f56a;
+      border-radius: 14px;
+      color: #06111d;
+      background: linear-gradient(135deg, #a4f04a, #7bd322 48%, #5da915);
+      font-weight: 900;
+      font-size: .98rem;
+      cursor: pointer;
+      text-shadow: 0 1px 0 #ffffff40;
+      box-shadow: inset 0 1px 0 #ffffff75, inset 0 -2px 0 #285c0d40, 0 7px 0 #315d12, 0 12px 25px #71be1640;
+      transition: transform .16s, filter .16s, box-shadow .16s;
+    }
+    .btn:hover { filter: brightness(1.08); transform: translateY(-2px); }
+    .btn:active { transform: translateY(4px); filter: brightness(.98); }
+    .btn:focus-visible, .tab:focus-visible { outline: 3px solid #e4ffc0; outline-offset: 4px; }
+    .price .btn {
+      border-color: #7bd4ff;
+      color: white;
+      background: linear-gradient(135deg, #39baff, #168be3 48%, #1262b5);
+      text-shadow: 0 1px 2px #003c72a0;
+      box-shadow: inset 0 1px 0 #ffffff90, 0 7px 0 #104b83, 0 12px 25px #2586db40;
+    }
+    .price .btn:hover { box-shadow: inset 0 1px 0 #ffffff90, 0 9px 0 #104b83, 0 15px 30px #2586db55; }
+    .result {
+      display: none;
+      margin-top: 18px;
+      padding: 18px;
+      border: 1px solid #4b8f26;
+      border-radius: 17px;
+      background: linear-gradient(145deg, #10251d, #0b1a21);
+    }
+    .result.visible { display: block; }
+    .price .result { border-color: #176cb4; background: linear-gradient(145deg, #0d233b, #0b192a); }
+    .result-kicker { color: var(--green); font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; }
+    .price .result-kicker { color: var(--blue); }
+    .result-value { margin: 10px 0 14px; font-size: clamp(1.7rem, 4vw, 2.2rem); font-weight: 900; letter-spacing: -.04em; overflow-wrap: anywhere; }
+    .result-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding-top: 12px; border-top: 1px solid #ffffff20; color: #a8bfd8; font-size: .82rem; }
+    .result-row strong { color: white; text-align: right; }
+    .alert, .error { display: none; margin-top: 13px; font-size: .81rem; line-height: 1.5; }
+    .alert { padding: 12px; border: 1px solid #8d6c1d; border-radius: 12px; color: #fcd36b; background: #fbbf2412; }
+    .alert.visible, .error.visible { display: block; }
+    .error { color: #fecaca; }
+    .note { margin: 18px 2px 0; color: #71869e; font-size: .73rem; line-height: 1.5; }
+    .footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding: 17px 24px; border-top: 1px solid #1b304a; color: #8da5c0; font-size: .76rem; }
+    .footer strong { color: #b7d7f7; }
+    .signature { color: var(--green); font-size: .7rem; font-style: italic; letter-spacing: .025em; text-shadow: 0 0 12px #81d32130; }
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#070f1e">
-<title>ERZ-com | Vertragsrechner</title>
-
-<style>
-:root {
-  color-scheme: dark;
-  --bg: #070f1e;
-  --panel: #0f1b2f;
-  --green: #81d321;
-  --blue: #2699e8;
-  --text: #f1f5f9;
-  --muted: #94a3b8;
-  --line: #20334c;
-}
-* { box-sizing: border-box; }
-body {
-  margin: 0; min-height: 100vh; padding: 20px 12px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: var(--text);
-  background: radial-gradient(ellipse at 50% -15%, #173d68, transparent 48%), var(--bg);
-}
-button, input { font: inherit; }
-.app { width: min(100%, 980px); margin: auto; }
-.shell {
-  overflow: hidden; border: 1px solid #1c3656; border-radius: 26px;
-  background: linear-gradient(155deg, #0f1d31, #07111f);
-  box-shadow: 0 28px 80px #0008;
-}
-.header {
-  display: flex; align-items: center; gap: 15px;
-  padding: 24px; border-bottom: 1px solid #1b304a;
-}
-
-/* ZENTRIERTES, PROPORTIONAL SKALIERTES LOGO */
-.logo {
-  width: 64px; height: 64px;
-  flex: 0 0 64px;
-  display: flex; align-items: center; justify-content: center;
-  overflow: hidden; border-radius: 18px;
-  background: #eaf5ff;
-  border: 1px solid #8fb9dc;
-  box-shadow: 0 5px 18px #0004;
-}
-.logo svg {
-  display: block;
-  width: 100%; height: 100%;
-  flex: 0 0 auto;
-}
-.brand { min-width: 0; }
-.brand h1 {
-  margin: 0; font-size: clamp(1.5rem, 4vw, 2.15rem);
-  font-weight: 900; letter-spacing: -.05em;
-}
-.brand h1 span { color: var(--green); }
-.brand p {
-  margin: 7px 0 0; color: var(--muted);
-  font-size: .7rem; letter-spacing: .08em; text-transform: uppercase;
-  line-height: 1.5;
-}
-.header-right { margin-left: auto; text-align: right; flex-shrink: 0; }
-.tag {
-  display: inline-block; padding: 6px 10px; border: 1px solid #294767;
-  border-radius: 999px; color: #b9d3ef; font-size: .7rem;
-}
-.slogan {
-  margin-top: 9px; color: var(--green);
-  font-family: "Segoe Script", "Brush Script MT", cursive;
-  font-style: italic; font-weight: 700; font-size: 1.05rem;
-  text-shadow: 0 0 16px #81d32136;
-}
-.content { padding: 22px; }
-.tabs {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 7px;
-  padding: 6px; border: 1px solid var(--line);
-  border-radius: 16px; background: #070f1e; margin-bottom: 22px;
-}
-.tab {
-  display: flex; align-items: center; justify-content: center; gap: 9px;
-  min-height: 49px; padding: 10px; border: 0; border-radius: 12px;
-  color: var(--muted); background: transparent; font-weight: 800;
-  cursor: pointer; transition: .2s;
-}
-.tab[aria-selected="true"] {
-  color: white; background: #14263e;
-  box-shadow: inset 0 0 0 1px #284566, 0 4px 14px #0003;
-}
-.tab[data-tab="marge"][aria-selected="true"] { color: var(--green); }
-.tab[data-tab="preis"][aria-selected="true"] { color: var(--blue); }
-
-.panels {
-  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px;
-}
-.panel {
-  min-width: 0; padding: 21px; border: 1px solid #1d3c5e;
-  border-radius: 21px; background: linear-gradient(155deg, #0c1d32, #091526);
-}
-.panel[hidden] { display: none; }
-.panel-head { display: flex; align-items: center; gap: 12px; margin-bottom: 23px; }
-.head-icon {
-  width: 48px; height: 48px; display: grid; place-items: center;
-  flex-shrink: 0; border-radius: 15px; color: var(--green);
-  background: #71be1614; border: 1px solid #71be164d; font-size: 24px;
-}
-.price .head-icon { color: var(--blue); background: #2586db19; border-color: #2586db5c; }
-.panel-head h2 { margin: 0; font-size: 1.12rem; }
-.panel-head p { margin: 5px 0 0; color: var(--muted); font-size: .74rem; line-height: 1.4; }
-
-.field { margin-bottom: 16px; }
-.field label { display: block; margin-bottom: 8px; font-size: .84rem; font-weight: 700; }
-.money-input {
-  display: flex; align-items: center; min-height: 54px;
-  border: 1px solid #294866; border-radius: 13px; background: #071426;
-  transition: .18s;
-}
-.money-input:focus-within {
-  border-color: var(--green); background: #0c2036;
-  box-shadow: 0 0 0 3px #71be1617;
-}
-.price .money-input:focus-within {
-  border-color: var(--blue); box-shadow: 0 0 0 3px #3b9df21a;
-}
-.money-input input {
-  width: 100%; min-width: 0; padding: 13px 0 13px 15px;
-  border: 0; outline: 0; color: var(--text); background: transparent;
-  font-size: 1.08rem; font-weight: 700;
-}
-.money-input input::placeholder { color: #647b96; }
-.currency {
-  display: grid; place-items: center; align-self: stretch;
-  flex: 0 0 45px; color: #a7bdd7; font-weight: 800;
-}
-
-/* TASTEN MIT SICHTBAREM KONTRAST UND KLICKEFFEKT */
-.btn {
-  position: relative; isolation: isolate; width: 100%; min-height: 56px;
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  margin: 7px 0 5px; padding: 14px 16px;
-  border: 1px solid #b7f56a; border-radius: 14px;
-  color: #06111d;
-  background: linear-gradient(135deg, #a4f04a, #7bd322 48%, #5da915);
-  font-weight: 900; font-size: .98rem; cursor: pointer;
-  text-shadow: 0 1px 0 #ffffff40;
-  box-shadow: inset 0 1px 0 #ffffff75, inset 0 -2px 0 #285c0d40,
-              0 7px 0 #315d12, 0 12px 25px #71be1640;
-  transition: transform .16s, filter .16s, box-shadow .16s;
-}
-.btn:hover { filter: brightness(1.08); transform: translateY(-2px); }
-.btn:active { transform: translateY(4px); filter: brightness(.98); }
-.btn:focus-visible, .tab:focus-visible {
-  outline: 3px solid #e4ffc0; outline-offset: 4px;
-}
-.price .btn {
-  border-color: #7bd4ff; color: white;
-  background: linear-gradient(135deg, #39baff, #168be3 48%, #1262b5);
-  text-shadow: 0 1px 2px #003c72a0;
-  box-shadow: inset 0 1px 0 #ffffff90, 0 7px 0 #104b83, 0 12px 25px #2586db40;
-}
-.price .btn:hover { box-shadow: inset 0 1px 0 #ffffff90, 0 9px 0 #104b83, 0 15px 30px #2586db55; }
-
-.result {
-  display: none; margin-top: 18px; padding: 18px;
-  border: 1px solid #4b8f26; border-radius: 17px;
-  background: linear-gradient(145deg, #10251d, #0b1a21);
-}
-.result.visible { display: block; }
-.price .result { border-color: #176cb4; background: linear-gradient(145deg, #0d233b, #0b192a); }
-.result-kicker {
-  color: var(--green); font-size: .72rem; font-weight: 800;
-  text-transform: uppercase; letter-spacing: .07em;
-}
-.price .result-kicker { color: var(--blue); }
-.result-value {
-  margin: 10px 0 14px; font-size: clamp(1.7rem, 4vw, 2.2rem);
-  font-weight: 900; letter-spacing: -.04em; overflow-wrap: anywhere;
-}
-.result-row {
-  display: flex; justify-content: space-between; align-items: center; gap: 10px;
-  padding-top: 12px; border-top: 1px solid #ffffff20;
-  color: #a8bfd8; font-size: .82rem;
-}
-.result-row strong { color: white; text-align: right; }
-.alert, .error { display: none; margin-top: 13px; font-size: .81rem; line-height: 1.5; }
-.alert {
-  padding: 12px; border: 1px solid #8d6c1d; border-radius: 12px;
-  color: #fcd36b; background: #fbbf2412;
-}
-.alert.visible, .error.visible { display: block; }
-.error { color: #fecaca; }
-.note { margin: 18px 2px 0; color: #71869e; font-size: .73rem; line-height: 1.5; }
-.footer {
-  display: flex; justify-content: space-between; align-items: center;
-  flex-wrap: wrap; gap: 10px; padding: 17px 24px;
-  border-top: 1px solid #1b304a; color: #8da5c0; font-size: .76rem;
-}
-.footer strong { color: #b7d7f7; }
-.signature {
-  color: var(--green); font-size: .7rem; font-style: italic;
-  letter-spacing: .025em; text-shadow: 0 0 12px #81d32130;
-}
-
-@media(max-width:760px) {
-  body { padding: 12px; }
-  .header { padding: 18px 15px; gap: 11px; }
-  .logo { width: 54px; height: 54px; flex-basis: 54px; border-radius: 15px; }
-  .header-right { max-width: 110px; }
-  .tag { display: none; }
-  .slogan { font-size: .85rem; }
-  .brand h1 { font-size: 1.45rem; }
-  .brand p { font-size: .61rem; letter-spacing: .035em; }
-  .content { padding: 14px; }
-  .panels { grid-template-columns: 1fr; }
-  .panel { padding: 18px; }
-  .footer { padding: 15px; }
-}
-@media(max-width:380px) {
-  .logo { width: 46px; height: 46px; flex-basis: 46px; }
-  .brand h1 { font-size: 1.3rem; }
-  .brand p { max-width: 155px; }
-  .header-right { margin-left: auto; }
-}
-</style>
+    @media(max-width:760px) {
+      body { padding: 12px; }
+      .header { padding: 18px 15px; gap: 11px; }
+      .logo { width: 54px; height: 54px; flex-basis: 54px; border-radius: 15px; }
+      .header-right { max-width: 110px; }
+      .tag { display: none; }
+      .slogan { font-size: .85rem; }
+      .brand h1 { font-size: 1.45rem; }
+      .brand p { font-size: .61rem; letter-spacing: .035em; }
+      .content { padding: 14px; }
+      .panels { grid-template-columns: 1fr; }
+      .panel { padding: 18px; }
+      .footer { padding: 15px; }
+    }
+    @media(max-width:380px) {
+      .logo { width: 46px; height: 46px; flex-basis: 46px; }
+      .brand h1 { font-size: 1.3rem; }
+      .brand p { max-width: 155px; }
+      .header-right { max-width: 88px; }
+      .slogan { font-size: .77rem; }
+      .tab { gap: 5px; padding: 9px 5px; font-size: .8rem; }
+      .content { padding: 10px; }
+      .panel { padding: 14px; }
+    }
+    @media(prefers-reduced-motion:reduce) {
+      *,*::before,*::after { animation: none !important; transition: none !important; }
+    }
+  </style>
 </head>
 <body>
+  <main class="app">
+    <div class="shell">
+      <header class="header">
+        <div class="logo" role="img" aria-label="VK Funknetz-Logo">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" aria-hidden="true">
+            <defs>
+              <linearGradient id="blueDisc" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#20b5ee"/>
+                <stop offset="1" stop-color="#0055a8"/>
+              </linearGradient>
 
-<div class="app">
-  <div class="shell">
-    <div class="header">
-      <div class="logo">
-        <!-- Logo SVG-Platzhalter aus Ihrem Original -->
-        <svg viewBox="0 0 64 64" fill="none" xmlns="http://w3.org">
-          <rect width="64" height="64" rx="14" fill="#0f1b2f"/>
-          <circle cx="32" cy="32" r="16" stroke="#81d321" stroke-width="4"/>
-        </svg>
-      </div>
-      <div class="brand">
-        <h1>ERZ-com<span>.net</span></h1>
-        <p>Handyshops Olbernhau + Marienberg</p>
-      </div>
-      <div class="header-right">
-        <span class="tag">Vertragsrechner</span>
-        <div class="slogan">Mehr als nur Handy!</div>
-      </div>
-    </div>
-
-    <div class="content">
-      <div class="tabs" role="tablist">
-        <button class="tab" data-tab="marge" aria-selected="true" role="tab" onclick="switchMode('marge')">▦ Marge berechnen</button>
-        <button class="tab" data-tab="preis" aria-selected="false" role="tab" onclick="switchMode('preis')">€ Preis kalkulieren</button>
-      </div>
-
-      <div class="panels">
-        <!-- MARGE PANEL -->
-        <div id="panel-marge" class="panel marge">
-          <div class="panel-head">
-            <div class="head-icon">▦</div>
-            <div>
-              <h2>Marge berechnen</h2>
-              <p>Ihren Gewinn schnell & einfach ermitteln</p>
-            </div>
-          </div>
-          
-          <div class="field">
-            <label>Brutto-Verkaufspreis</label>
-            <div class="money-input">
-              <input type="text" inputmode="decimal" id="m-brutto-vk" placeholder="0,00" onkeydown="handleEnter(event, 'marge')">
-              <span class="currency">€</span>
-            </div>
-          </div>
-          <div class="field">
