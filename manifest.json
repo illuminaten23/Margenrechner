@@ -3,15 +3,14 @@
   "name": "ERZ-com Vertragsrechner",
   "icons": [
     {
-      "src": "https://flaticon.com",
-      "type": "image/png",
+      "src": "icon.png",
       "sizes": "512x512",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ],
   "start_url": "index.html",
-  "background_color": "#070f1e",
-  "theme_color": "#070f1e",
+  "background_color": "#0f1b2f",
+  "theme_color": "#0f1b2f",
   "display": "standalone",
   "orientation": "portrait"
 }
